@@ -83,6 +83,28 @@ cubs %>%
 
 ## Question 4
 
+```{r}
+
+percent_chicago = 0.573
+percent_sd = 0.710
+
+chicago_vax = 301000
+sd_vax = 266000
+
+ch_vax_perc = 0.434
+sd_vax_perc = 0.572
+
+ch_vax_perc/percent_chicago
+sd_vax_perc/percent_sd
+#On a strict proportion of percentage basis, which is super simplistic, the SD vax distribution is barely more equitable than the Chicago distribution.
+
+#Overall, I'm unsure if this is the best way to determine if a city is giving out vaccines to those who need it. One one hand, I think if 57% of the population is black or hispanic, it is completely fair to give at least 57% of the vaccines to those minority groups. However, I understand that vaccines might need to be given to first respondents like hospital workers first, and that can throw a wrench in the system because the distribution of minorities in that setting might be vastly different than the overall population of the city. On the other hand, an argument to give more than 57% or the distribution of minorities is in the city is also pertinent because minorities tend to be at higher risk of contracting COVID due to being less well off economically usually.
+
+
+```
+
+So 
+
 
 
 
