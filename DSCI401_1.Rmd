@@ -1,0 +1,91 @@
+---
+title: "DSCI 401 HW1"
+output: html_document
+date: "2022-09-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#Homework 1
+
+Reading in libraries and datasets
+
+```{r}
+library(ggplot2)
+library(readr)
+library(tidyverse)
+library(DT)
+library(dplyr)
+cubs <- read_csv("https://raw.githubusercontent.com/gjm112/DSCI401/main/data/cubs_all_time.csv")
+```
+
+## Question 2:
+
+
+
+### a) How many total games have the Cubs won and lost between 1876 and 2022?
+
+```{r}
+sum(cubs$W)
+
+#Number of games won by Cubs across 1876 through 2022 is 11141
+
+sum(cubs$L)
+#Number of games lost by Cubs from 1876 through 2022 is 10592
+```
+
+
+### b) What year did the Cubs score the most runs? What year did the Cubs score the fewest runs? Do you have any thoughts about the year that the Cubs scored the fewest runs?
+```{r}
+
+cubs[cubs$R==max(cubs$R),]
+# cubs scored 1056 runs in 1894, crazy stuff! what was in the water back then?
+
+cubs[cubs$R==min(cubs$R),]
+
+# cubs scored 265 runs in 2020, :/. Get your numbers up. In all seriousness, this makes sense since COVID shortened the 2020 MLB season with an all time low 60 games played during this season. Suprisingly, there was another season with only 60 games in 1877. A lot of the earlier years had waaaay less games as they were trying to determine season length, at least that is my guess. Truthfully they had it right earlier, nobody wants a 162 game season. Bring back the 60 game seasons!
+
+
+cubs_filtered <- cubs
+cubs_filtered %<>%
+  select(Year,Tm,R,G) %>%
+  arrange(R)
+
+
+
+
+datatable(cubs_filtered, options = list(autoWidth = TRUE), filter = list(
+  position = 'top', clear = FALSE))
+
+
+#Also did you know that the cubs where originally named the Chicago White Stockings? Honestly thats a WACK name
+#Glad they changed it
+
+```
+
+
+### c) In how many seasons was the Cubs total attendance (i.e. the variable Attendance) over 3 million?)
+
+```{r}
+cubs %>% 
+  filter(Attendance>3000000) %>% 
+  nrow()
+
+#12 seasons where attendance is over 3 million.
+```
+
+
+## Question 3
+
+[link] (https://colab.research.google.com/drive/1Latf78B-sTMs1KNApMsuKSPeT46QKEqB?usp=sharing)
+
+
+## Question 4
+
+
+
+
+
+
+
