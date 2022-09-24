@@ -1,0 +1,173 @@
+---
+title: "DSCI401_2"
+author: "Akhil Ghosh"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+[link](<https://colab.research.google.com/drive/1wuC0nH4_cmCQJaTNYlwY3IB6nE-FT9na?usp=sharing>)
+
+
+#Q1:
+
+```{r pressure, echo=FALSE}
+library(tidyverse)
+library(Lahman)
+```
+
+## a)
+
+```{r}
+Teams %>% 
+  filter(yearID >1999, yearID<2010) %>% 
+  select(yearID, W, L)
+```
+
+## b)
+
+```{r}
+Teams %>%
+  filter(teamID == "CHN", HR>=200) %>% 
+  summarize(median(W))
+```
+
+Median wins was 84 in these seasons
+
+## c)
+
+```{r}
+Teams %>% 
+  mutate(pres_terms = as.factor((yearID%/%4) - (1788%/%4))) %>%
+  group_by(pres_terms) %>% 
+  summarize(runs_by_pres = sum(HR)) %>% 
+  select(pres_terms, runs_by_pres) %>% 
+  arrange(desc(runs_by_pres))
+
+57*4 + 1788
+#Fell during the 2016-2020 presidential term, which Trump was serving his term.
+```
+
+## d)
+
+```{r}
+homers = Teams %>%
+  group_by(yearID,lgID) %>% 
+  summarize(hr=sum(HR))
+
+
+
+ggplot(aes(x = yearID, y = hr,group=lgID,color=lgID), data = homers) +
+  geom_line() + xlab("Season") + 
+  ylab("Total Homeruns")
+
+#Stratified by league! I kept NA in there because it really was a league from 1871-1875. If you really want me to get rid of it, I did it in the below code
+
+dropped <- homers %>%
+  filter(!(lgID=="NA")) %>% 
+  drop_na(lgID)
+
+ggplot(aes(x = yearID, y = hr,group=lgID,color=lgID), data = dropped) +
+  geom_line() + xlab("Season") + 
+  ylab("Total Homeruns")
+```
+
+## e)
+
+```{r}
+winning <- Teams %>% 
+  mutate(winning_record = ifelse(W>L,TRUE,FALSE))
+
+
+ggplot(aes(x=RA,y=R,color=winning_record),data=winning) +geom_point()
+#generally, if you had more runs than runs against you had a winning record. A couple outliers on both sides which would be interesting to look at.
+
+
+```
+
+#Q2:
+
+```{r}
+#summary(flights)
+```
+
+## a)
+
+```{r}
+
+library("nycflights13")
+library(tidyverse)
+
+flights <- nycflights13::flights
+
+summary(flights)
+
+flights %>% 
+  group_by(month) %>% 
+  summarize(flights_by_month=sum(n()),
+    cancels_by_month = (sum(is.na(air_time))),
+    cancel_prop=cancels_by_month/flights_by_month)
+```
+
+#I really can't distinguish a pattern for when flights are more likely to be cancelled. Sems like the the summer months and the winter months have the highest uptick in cancellations, but for whatever reason feburary has the most proportion of cancellations.
+
+## b)
+
+```{r}
+flights %>% 
+  mutate(total_delay = dep_delay+arr_delay) %>% 
+  filter(total_delay>1) %>% 
+  group_by(origin) %>% 
+  summarize(Average_delay = mean(total_delay))
+```
+
+## c)
+
+```{r}
+flights %>% 
+  drop_na(air_time) %>% 
+  group_by(carrier) %>% 
+  summarize(Average_air_time = mean(air_time)/60) %>% 
+  arrange(desc(Average_air_time))
+```
+
+#Carrier HA consistently has the longest air time at 10.4 hours
+
+## d)
+
+```{r}
+delayed <- flights %>% 
+  mutate(total_delay = dep_delay+arr_delay) %>% 
+  filter(total_delay>0)  
+
+ggplot(aes(x = total_delay,color=month), data = delayed) + geom_histogram(binwidth = 30) + facet_wrap(~month)
+```
+
+## e)
+
+```{r}
+delayed_60 <- flights %>% 
+  mutate(total_delay = dep_delay+arr_delay) %>% 
+  filter(total_delay>=60) 
+  
+
+
+delayed_60 %>% 
+  group_by(carrier) %>% 
+  summarize(flights = sum(n())) %>% 
+  arrange(desc(flights))
+```
+
+#these are the top 5 airlines in terms of number of flights that have total delays over 60 minutes
+
+```{r}
+ggplot(
+  data = delayed_60, 
+  aes(x=carrier,
+    y= total_delay 
+  )
+) + 
+  geom_boxplot(data=subset(delayed_60, carrier=='EV' | carrier=='B6'|carrier=="UA"|carrier=="DL"|carrier=="MQ")) 
+
+```
